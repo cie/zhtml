@@ -38,6 +38,12 @@
         opacity: 0;
         transition: visibility 0.5s 0.4s linear, opacity 0.5s 0.4s linear;
       }
+      section {
+        cursor: auto;
+      }
+      section:not(.z-focused) {
+        cursor: pointer;
+      }
       .z-focused-descendant > .level-1,
       .z-focused > .level-1 {
         visibility: visible;
