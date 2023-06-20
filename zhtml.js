@@ -83,6 +83,30 @@ class Canvas {
 
   focus(el) {
     this.moveTo(this.pointOf(el).neg());
+    [
+      "z-focused",
+      "z-focused-parent",
+      "z-focused-grandparent",
+      "z-focused-descendant",
+    ].forEach((cls) => {
+      this.el.querySelectorAll(`.${cls}`).forEach((el) => {
+        el.classList.remove(cls);
+      });
+    });
+    el.classList.add("z-focused");
+    el.querySelectorAll(":scope > section").forEach((el) => {
+      el.classList.add("z-focused-parent");
+    });
+    el.querySelectorAll(":scope > section > section").forEach((el) => {
+      el.classList.add("z-focused-grandparent");
+    });
+    for (
+      let x = el.parentElement?.closest("main,section");
+      x.nodeName !== "MAIN";
+      x = x.parentElement?.closest("main,section")
+    ) {
+      x.classList.add("z-focused-descendant");
+    }
   }
 
   onWheel = (e) => {};
