@@ -82,7 +82,7 @@ class Canvas {
   }
 
   focus(el) {
-    this.moveTo(this.pointOf(el).neg());
+    this.moveTo(this.centerOf(el));
     [
       "z-focused",
       "z-focused-parent",
@@ -114,6 +114,14 @@ class Canvas {
   onClick = (e) => {
     this.focus(e.target.closest("section"));
   };
+
+  centerOf(el) {
+    const viewportRect = this.viewport.getBoundingClientRect();
+    const p = this.pointOf(el);
+    return new Point(viewportRect.width / 2, viewportRect.height / 2).plus(
+      p.plus(new Point(el.offsetWidth / 2, el.offsetHeight / 2)).neg()
+    );
+  }
 
   pointOf(el) {
     if (el.nodeName === "MAIN" || el.nodeName === "BODY") return new Point();
