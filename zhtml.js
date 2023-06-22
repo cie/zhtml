@@ -125,15 +125,21 @@ class Canvas {
 
   pointOf(el) {
     if (el.nodeName === "MAIN" || el.nodeName === "BODY") return new Point();
-    const matrix = getComputedStyle(el)
-      .transform.match(/matrix\((.*)\)/)[1]
+    const style = getComputedStyle(el);
+    const matrix = (
+      style.transform.match(/matrix\((.*)\)/)?.[1] ?? "1,0,0,1,0,0"
+    )
       .split(",")
       .map(Number.parseFloat);
-    const p = new Point(
-      el.offsetLeft + matrix[4],
-      el.offsetTop + matrix[5],
-      matrix[0]
-    );
+    const left =
+      el.offsetParent === el.parentElement
+        ? el.offsetLeft
+        : el.offsetLeft - el.parentElement.offsetLeft;
+    const top =
+      el.offsetParent === el.parentElement
+        ? el.offsetTop
+        : el.offsetTop - el.parentElement.offsetTop;
+    const p = new Point(left + matrix[4], top + matrix[5], matrix[0]);
     return this.pointOf(el.parentElement).plus(p);
   }
 }
