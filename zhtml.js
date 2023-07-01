@@ -73,8 +73,9 @@ class Canvas {
 
   moveTo(p) {
     const oldTransform = getComputedStyle(this.el).transform;
-    const len = Math.abs(this.p.dist(p));
+    const len = Math.max(0.3, Math.abs(this.p.dist(p)));
     this.el.style.transform = this.p = p;
+    this.el.getAnimations().forEach((a) => a.cancel());
     this.el.animate(
       [{ transform: oldTransform }, { transform: this.p.toString() }],
       { duration: 2000 * len ** 0.6, iterations: 1, easing: "ease" }
@@ -118,9 +119,19 @@ class Canvas {
   centerOf(el) {
     const viewportRect = this.viewport.getBoundingClientRect();
     const p = this.pointOf(el);
-    return new Point(viewportRect.width / 2, viewportRect.height / 2).plus(
-      p.plus(new Point(el.offsetWidth / 2, el.offsetHeight / 2)).neg()
+    const margin = 10;
+    const corr = Math.min(
+      viewportRect.width / (el.offsetWidth + margin * 2),
+      viewportRect.height / (el.offsetHeight + margin * 2),
+      1
     );
+    const center = new Point(
+      viewportRect.width / 2,
+      viewportRect.height / 2
+    ).plus(
+      p.plus(new Point(el.offsetWidth / 2, el.offsetHeight / 2, 1 / corr)).neg()
+    );
+    return center;
   }
 
   pointOf(el) {
